@@ -38,7 +38,6 @@ export class SceneManager {
     this.controls.mouseButtons.RIGHT = THREE.MOUSE.PAN;
 
     this.addLights();
-    this.scene.add(new THREE.GridHelper(24, 24, 0x334b4b, 0x222636));
 
     window.addEventListener("resize", () => this.onResize());
   }
@@ -54,17 +53,25 @@ export class SceneManager {
   }
 
   onResize() {
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
+    const active = this.view || this;
+    active.camera.aspect = window.innerWidth / window.innerHeight;
+    active.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  setView(view) {
+    this.view = view;
+    this.controls.enabled = !view;
   }
 
   start(onFrame) {
     const animate = () => {
       requestAnimationFrame(animate);
+      const active = this.view || this;
       this.controls.update();
+      if (active.update) active.update();
       if (onFrame) onFrame();
-      this.renderer.render(this.scene, this.camera);
+      this.renderer.render(active.scene || active, active.camera);
     };
     animate();
   }

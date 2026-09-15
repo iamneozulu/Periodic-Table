@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { ELEMENTS } from "./data/elements.js";
 import { SceneManager } from "./three/SceneManager.js";
 import { PeriodicTable } from "./world/PeriodicTable.js";
+import { ElementViewer } from "./world/ElementViewer.js";
 import { HUD } from "./ui/HUD.js";
 
 const SPACING = 1.4;
@@ -27,8 +28,28 @@ sceneManager.scene.add(table.group);
 
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2(1, 1);
+let viewer = null;
+let pointerDown = null;
+
+function openViewer(element) {
+  if (viewer) return;
+  document.body.classList.add("viewing");
+  viewer = new ElementViewer({
+    element,
+    domElement: sceneManager.renderer.domElement,
+    onClose: () => {
+      viewer.dispose();
+      viewer = null;
+      document.body.classList.remove("viewing");
+      sceneManager.setView(null);
+    },
+  });
+  sceneManager.setView(viewer);
+}
 
 window.addEventListener("pointermove", (event) => {
+  if (viewer) return;
+
   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
@@ -41,6 +62,22 @@ window.addEventListener("pointermove", (event) => {
   } else {
     hud.reset();
   }
+});
+
+window.addEventListener("pointerdown", (event) => {
+  pointerDown = { x: event.clientX, y: event.clientY };
+});
+
+window.addEventListener("pointerup", (event) => {
+  if (viewer || !pointerDown) return;
+  const moved = Math.hypot(event.clientX - pointerDown.x, event.clientY - pointerDown.y);
+  pointerDown = null;
+  if (moved > 6) return;
+
+  pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  const block = table.getBlockAt(pointer, raycaster, sceneManager.camera);
+  if (block) openViewer(block.element);
 });
 
 sceneManager.start();

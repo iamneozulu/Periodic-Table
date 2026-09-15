@@ -1,3 +1,3 @@
-- [ ] make clicking on an element block "open the box" by opennng a new scene with the background colour the same colour as the element block. make it its own new class/js file and tell me what you called it
-- [ ] in the above class, make the atomic structure take up 50% to the left and information about to be on the left
-- [ ] make it all look like its in the element box
+- [ ] clicking an element makes the camera move to the element first, putting it in the center of that frame
+- [ ] searching an element moves you to its location
+- [ ] filtering out atoms by clicking on element type, moving the camera to the center of the element type section, and also removing the other elements or making the selected elements glow when selected

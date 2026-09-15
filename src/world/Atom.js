@@ -9,31 +9,32 @@ const COLOR = {
 const RANDOM = (radius) => (Math.random() - 0.5) * radius;
 
 export class Atom extends THREE.Group {
-  constructor(element, { outerRadius = 0.42 } = {}) {
+  constructor(
+    element,
+    {
+      outerRadius = 0.42,
+      nucleusRadius = 0.045,
+      nucleonSize = 0.016,
+      electronSize = 0.014,
+    } = {},
+  ) {
     super();
     this.element = element;
     const shells = this.computeShells(element);
-    this.buildNucleus(element);
-    this.buildShells(shells, outerRadius);
+    this.buildNucleus(element, { nucleusRadius, nucleonSize });
+    this.buildShells(shells, outerRadius, electronSize);
   }
 
   computeShells(element) {
-    const shellCount = Math.min(element.period, 7);
-    let remaining = element.number;
-    const shells = [];
-    for (let n = 1; n <= shellCount; n++) {
-      const capacity = 2 * n * n;
-      const count = Math.min(capacity, remaining);
-      shells.push({ n, count });
-      remaining -= count;
-    }
-    return shells;
+    return (element.shells ?? [element.number]).map((count) => ({
+      count,
+      max: count,
+    }));
   }
 
-  buildNucleus(element) {
+  buildNucleus(element, { nucleusRadius, nucleonSize }) {
     const protonCount = element.number;
-    const neutronCount = Math.round(element.number * 1.25);
-    const nucleusRadius = 0.045;
+    const neutronCount = element.neutrons ?? protonCount;
     const dummy = new THREE.Object3D();
 
     const protonMaterial = new THREE.MeshStandardMaterial({
@@ -44,7 +45,7 @@ export class Atom extends THREE.Group {
       color: COLOR.neutron,
       roughness: 0.5,
     });
-    const sphereGeometry = new THREE.SphereGeometry(0.02, 8, 8);
+    const sphereGeometry = new THREE.SphereGeometry(nucleonSize, 8, 8);
 
     const protonMesh = new THREE.InstancedMesh(
       sphereGeometry,
@@ -83,14 +84,14 @@ export class Atom extends THREE.Group {
     this.add(nucleus);
   }
 
-  buildShells(shells, outerRadius) {
+  buildShells(shells, outerRadius, electronSize) {
     const electronTotal = shells.reduce((total, shell) => total + shell.count, 0);
     const electronMaterial = new THREE.MeshStandardMaterial({
       color: COLOR.electron,
       roughness: 0.4,
     });
     const electronMesh = new THREE.InstancedMesh(
-      new THREE.SphereGeometry(0.028, 8, 8),
+      new THREE.SphereGeometry(electronSize, 8, 8),
       electronMaterial,
       electronTotal,
     );
@@ -111,7 +112,7 @@ export class Atom extends THREE.Group {
     let electronIndex = 0;
 
     shells.forEach((shell, index) => {
-      const radius = (outerRadius * shell.n) / shells.length;
+      const radius = (outerRadius * (index + 1)) / shells.length;
       const electrons = shell.count;
 
       dummy.position.set(0, 0, 0);
