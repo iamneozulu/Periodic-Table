@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background: #0f1120;
+  color: #eef;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+}
+
+#legend {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(15, 17, 32, 0.75);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  line-height: 1.9;
+  user-select: none;
+}
+
+#legend .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 8px;
+}
+
+#legend .swatch {
+  display: flex;
+  align-items: center;
+}
+
+#panel {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  left: auto;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: rgba(15, 17, 32, 0.75);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: right;
+  user-select: none;
+  pointer-events: none;
+}
+
+#title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+#title::first-letter {
+  text-transform: uppercase;
+}
+
+#info {
+  font-size: 12px;
+  opacity: 0.75;
+  text-transform: capitalize;
+}

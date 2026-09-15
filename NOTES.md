@@ -1,0 +1,1 @@
+- [ ] make the orbital rings stay up straight
