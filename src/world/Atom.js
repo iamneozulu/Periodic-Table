@@ -112,11 +112,10 @@ export class Atom extends THREE.Group {
 
     shells.forEach((shell, index) => {
       const radius = (outerRadius * shell.n) / shells.length;
-      const euler = new THREE.Euler(index * 0.25, 0, shell.n * 0.35);
       const electrons = shell.count;
 
       dummy.position.set(0, 0, 0);
-      dummy.rotation.copy(euler);
+      dummy.rotation.set(0, 0, 0);
       dummy.scale.setScalar(radius);
       dummy.updateMatrix();
       ringMesh.setMatrixAt(index, dummy.matrix);
@@ -128,7 +127,7 @@ export class Atom extends THREE.Group {
           radius * Math.sin(angle),
           0,
         );
-        dummy.rotation.copy(euler);
+        dummy.rotation.set(0, 0, 0);
         dummy.scale.setScalar(1);
         dummy.updateMatrix();
         electronMesh.setMatrixAt(electronIndex, dummy.matrix);

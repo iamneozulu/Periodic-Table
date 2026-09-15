@@ -1,14 +1,28 @@
 import * as THREE from "three";
+import { ELEMENTS } from "./data/elements.js";
 import { SceneManager } from "./three/SceneManager.js";
 import { PeriodicTable } from "./world/PeriodicTable.js";
 import { HUD } from "./ui/HUD.js";
 
-const sceneManager = new SceneManager(document.getElementById("app"));
+const SPACING = 1.4;
+const SIZE = 1;
+
+const hydrogen = ELEMENTS.find((element) => element.number === 1);
+const hydrogenPosition = new THREE.Vector3(
+  (hydrogen.group - 10) * SPACING,
+  (5 - hydrogen.period) * SPACING,
+  0,
+);
+
+const sceneManager = new SceneManager(document.getElementById("app"), {
+  target: hydrogenPosition,
+  cameraPosition: hydrogenPosition.clone().add(new THREE.Vector3(0, 0.8, 6)),
+});
 
 const hud = new HUD();
 hud.buildLegend();
 
-const table = new PeriodicTable({ spacing: 1.4, size: 1 });
+const table = new PeriodicTable({ spacing: SPACING, size: SIZE });
 sceneManager.scene.add(table.group);
 
 const raycaster = new THREE.Raycaster();
