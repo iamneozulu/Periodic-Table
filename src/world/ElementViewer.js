@@ -17,7 +17,13 @@ export class ElementViewer extends THREE.Scene {
     this.background = new THREE.Color(color).multiplyScalar(0.6);
 
     this.content = new THREE.Group();
-    this.content.position.set(-1.7, 0, 0);
+    const isMobile = window.innerWidth <= 720;
+    if (isMobile) {
+      this.content.position.set(1.5, 1.34, 0);
+      this.content.scale.setScalar(0.5);
+    } else {
+      this.content.position.set(-1.7, 0, 0);
+    }
     this.add(this.content);
 
     this.addLights();
@@ -35,8 +41,13 @@ export class ElementViewer extends THREE.Scene {
       0.1,
       300,
     );
-    this.camera.position.set(1.5, 0, 10);
-    this.camera.lookAt(new THREE.Vector3(1.5, 0, 0));
+    if (isMobile) {
+      this.camera.position.set(1.5, 0.3, 13);
+      this.camera.lookAt(new THREE.Vector3(1.5, 0.3, 0));
+    } else {
+      this.camera.position.set(1.5, 0, 10);
+      this.camera.lookAt(new THREE.Vector3(1.5, 0, 0));
+    }
 
     this.drag = { active: false, lastX: 0 };
     this.yawVelocity = 0;
