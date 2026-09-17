@@ -11,7 +11,7 @@ export const CATEGORY_COLORS = {
   actinide: 0xe599f7,
 };
 
-export const ELEMENTS = [
+export const ELEMENT_DATA = [
   { number: 1, symbol: "H", name: "Hydrogen", period: 1, group: 1, category: "nonmetal", neutrons: 0, shells: [1] },
   { number: 2, symbol: "He", name: "Helium", period: 1, group: 18, category: "nobleGas", neutrons: 2, shells: [2] },
   { number: 3, symbol: "Li", name: "Lithium", period: 2, group: 1, category: "alkaliMetal", neutrons: 4, shells: [2, 1] },

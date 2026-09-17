@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CATEGORY_COLORS } from "../data/elements.js";
+import { CATEGORY_COLORS } from "../data/elementData.js";
 import { Atom } from "./Atom.js";
 
 export class ElementBlock extends THREE.Group {

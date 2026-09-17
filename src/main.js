@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { ELEMENTS } from "./data/elements.js";
+import { ELEMENT_DATA } from "./data/elementData.js";
 import { SceneManager } from "./three/SceneManager.js";
 import { PeriodicTable } from "./world/PeriodicTable.js";
 import { ElementViewer } from "./world/ElementViewer.js";
@@ -8,7 +8,7 @@ import { HUD } from "./ui/HUD.js";
 const SPACING = 1.4;
 const SIZE = 1;
 
-const hydrogen = ELEMENTS.find((element) => element.number === 1);
+const hydrogen = ELEMENT_DATA.find((element) => element.number === 1);
 const hydrogenPosition = new THREE.Vector3(
   (hydrogen.group - 10) * SPACING,
   (5 - hydrogen.period) * SPACING,
@@ -87,7 +87,7 @@ let searchActiveIndex = 0;
 function searchElements(query) {
   const q = query.trim().toLowerCase();
   if (!q) return [];
-  return ELEMENTS.filter(
+  return ELEMENT_DATA.filter(
     (el) =>
       el.name.toLowerCase().startsWith(q) ||
       el.symbol.toLowerCase().startsWith(q) ||
@@ -167,7 +167,7 @@ searchInput.addEventListener("blur", () => {
 const randomButton = document.getElementById("random");
 randomButton.addEventListener("click", () => {
   clearFilter();
-  const element = ELEMENTS[Math.floor(Math.random() * ELEMENTS.length)];
+  const element = ELEMENT_DATA[Math.floor(Math.random() * ELEMENT_DATA.length)];
   flyToElement(element);
 });
 

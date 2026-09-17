@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { ELEMENTS, CATEGORY_COLORS } from "../data/elements.js";
+import { ELEMENT_DATA, CATEGORY_COLORS } from "../data/elementData.js";
 import { ElementBlock } from "./ElementBlock.js";
 
 export class PeriodicTable {
   constructor(options = {}) {
     this.group = new THREE.Group();
-    this.blocks = ELEMENTS.map((element) => {
+    this.blocks = ELEMENT_DATA.map((element) => {
       const block = new ElementBlock(element, options);
       this.group.add(block);
       return block;

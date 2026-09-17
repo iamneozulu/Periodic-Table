@@ -8,14 +8,20 @@
     "three": "^0.163.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@types/three": "^0.163.0",
-    "vite": "^7.3.6"
+    "playwright": "^1.60.0",
+    "vite": "^7.3.6",
+    "vitest": "^4.1.8"
   },
   "scripts": {
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.js --reporter=verbose --testTimeout=120000"
   },
   "author": "iamneozulu",
   "license": "MIT"

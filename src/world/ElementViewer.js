@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { CATEGORY_COLORS } from "../data/elements.js";
-import { ELEMENT_HISTORY } from "../data/facts.js";
+import { CATEGORY_COLORS } from "../data/elementData.js";
+import { ELEMENT_HISTORY } from "../data/elementFacts.js";
 import { Atom } from "./Atom.js";
 
 const BOX_SIZE = 4.5;
@@ -19,8 +19,8 @@ export class ElementViewer extends THREE.Scene {
     this.content = new THREE.Group();
     const isMobile = window.innerWidth <= 720;
     if (isMobile) {
-      this.content.position.set(1.5, 1.34, 0);
-      this.content.scale.setScalar(0.5);
+      this.content.position.set(1.5, 2.6, 0);
+      this.content.scale.setScalar(0.55);
     } else {
       this.content.position.set(-1.7, 0, 0);
     }
@@ -42,7 +42,7 @@ export class ElementViewer extends THREE.Scene {
       300,
     );
     if (isMobile) {
-      this.camera.position.set(1.5, 0.3, 13);
+      this.camera.position.set(1.5, 0.3, 11);
       this.camera.lookAt(new THREE.Vector3(1.5, 0.3, 0));
     } else {
       this.camera.position.set(1.5, 0, 10);

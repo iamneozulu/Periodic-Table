@@ -1,7 +1,8 @@
-export default {
-  root: ".",
-  publicDir: "public",
-  build: {
-    outDir: "dist",
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  test: {
+    environment: 'node',
+    exclude: ['node_modules/**', 'tests/**/*.e2e.test.js'],
   },
-};
+});
