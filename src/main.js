@@ -47,6 +47,131 @@ function openViewer(element) {
   sceneManager.setView(viewer);
 }
 
+function flyToElement(element, onComplete) {
+  const block = table.blocks.find((b) => b.element.number === element.number);
+  if (!block) return onComplete?.();
+  sceneManager.flyTo(block.position, onComplete);
+}
+
+function flyToPosition(position) {
+  sceneManager.flyTo(position);
+}
+
+function getBlockForElement(element) {
+  return table.blocks.find((b) => b.element.number === element.number);
+}
+
+// ── Category filter ──
+function clearFilter() {
+  if (!table.activeCategory) return;
+  table.clearFilter();
+  hud.setActiveCategory(null);
+}
+
+hud.onCategoryClick = (category) => {
+  const center = table.filterCategory(category);
+  if (center) {
+    hud.setActiveCategory(category);
+    flyToPosition(center);
+  } else {
+    hud.setActiveCategory(null);
+  }
+};
+
+// ── Search ──
+const searchInput = document.getElementById("search");
+const searchResults = document.getElementById("search-results");
+const searchRowEls = [];
+let searchActiveIndex = 0;
+
+function searchElements(query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return ELEMENTS.filter(
+    (el) =>
+      el.name.toLowerCase().startsWith(q) ||
+      el.symbol.toLowerCase().startsWith(q) ||
+      String(el.number) === q,
+  ).slice(0, 8);
+}
+
+function selectSearchResult(el) {
+  searchInput.value = "";
+  searchResults.classList.remove("open");
+  searchInput.blur();
+  clearFilter();
+  flyToElement(el);
+}
+
+function setActiveSearchIndex(index) {
+  searchActiveIndex = index;
+  searchRowEls.forEach((row, i) => row.classList.toggle("active", i === index));
+  const row = searchRowEls[searchActiveIndex];
+  if (row) row.scrollIntoView({ block: "nearest" });
+}
+
+function renderSearchResults(results) {
+  searchResults.innerHTML = "";
+  searchRowEls.length = 0;
+  if (results.length === 0) {
+    searchResults.classList.remove("open");
+    return;
+  }
+  searchResults.classList.add("open");
+  for (const el of results) {
+    const row = document.createElement("div");
+    row.className = "result";
+    row.innerHTML = `<span class="sym">${el.symbol}</span><span class="nm">${el.name} (${el.number})</span>`;
+    row.addEventListener("pointerdown", (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      selectSearchResult(el);
+    });
+    row.addEventListener("pointerenter", () => {
+      setActiveSearchIndex(searchRowEls.indexOf(row));
+    });
+    searchRowEls.push(row);
+    searchResults.appendChild(row);
+  }
+  setActiveSearchIndex(0);
+}
+
+searchInput.addEventListener("input", () => {
+  renderSearchResults(searchElements(searchInput.value));
+});
+
+searchInput.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown" && searchRowEls.length > 0) {
+    e.preventDefault();
+    setActiveSearchIndex((searchActiveIndex + 1) % searchRowEls.length);
+  } else if (e.key === "ArrowUp" && searchRowEls.length > 0) {
+    e.preventDefault();
+    setActiveSearchIndex(
+      (searchActiveIndex - 1 + searchRowEls.length) % searchRowEls.length,
+    );
+  } else if (e.key === "Enter" && searchRowEls.length > 0) {
+    e.preventDefault();
+    selectSearchResult(searchElements(searchInput.value)[searchActiveIndex]);
+  } else if (e.key === "Escape") {
+    searchInput.value = "";
+    searchResults.classList.remove("open");
+    searchInput.blur();
+  }
+});
+
+searchInput.addEventListener("blur", () => {
+  setTimeout(() => searchResults.classList.remove("open"), 150);
+});
+
+// ── Random picker ──
+const randomButton = document.getElementById("random");
+randomButton.addEventListener("click", () => {
+  clearFilter();
+  const element = ELEMENTS[Math.floor(Math.random() * ELEMENTS.length)];
+  flyToElement(element);
+});
+
+// ── Hover ──
 window.addEventListener("pointermove", (event) => {
   if (viewer) return;
 
@@ -64,7 +189,15 @@ window.addEventListener("pointermove", (event) => {
   }
 });
 
+// ── Click → fly → open viewer ──
 window.addEventListener("pointerdown", (event) => {
+  if (
+    event.target === searchInput ||
+    searchResults.contains(event.target) ||
+    event.target.closest("#random")
+  ) {
+    return;
+  }
   pointerDown = { x: event.clientX, y: event.clientY };
 });
 
@@ -74,10 +207,14 @@ window.addEventListener("pointerup", (event) => {
   pointerDown = null;
   if (moved > 6) return;
 
+  if (table.activeCategory && !event.target.closest("#legend")) clearFilter();
+
   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
   const block = table.getBlockAt(pointer, raycaster, sceneManager.camera);
-  if (block) openViewer(block.element);
+  if (block) {
+    flyToElement(block.element, () => openViewer(block.element));
+  }
 });
 
 sceneManager.start();

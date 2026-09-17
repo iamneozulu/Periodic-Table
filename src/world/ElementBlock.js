@@ -87,4 +87,33 @@ export class ElementBlock extends THREE.Group {
     this.scale.setScalar(active ? 1.15 : 1);
     this.outline.material.opacity = active ? 1 : 0.85;
   }
+
+  setDimmed(dimmed) {
+    this.cube.material.forEach((mat) => {
+      if (mat.map) {
+        mat.opacity = dimmed ? 0.06 : 1;
+      } else {
+        mat.opacity = dimmed ? 0.03 : 0.15;
+      }
+    });
+    this.outline.material.opacity = dimmed ? 0.06 : 0.85;
+  }
+
+  setHighlighted(on) {
+    const emissive = on ? CATEGORY_COLORS[this.element.category] : 0x000000;
+    const intensity = on ? 0.45 : 0;
+    this.cube.material.forEach((mat) => {
+      if (!mat.map) {
+        mat.emissive.set(emissive);
+        mat.emissiveIntensity = intensity;
+      }
+    });
+    this.outline.material.opacity = on ? 1 : 0.85;
+  }
+
+  resetVisual() {
+    this.setDimmed(false);
+    this.setHighlighted(false);
+    this.setHovered(false);
+  }
 }

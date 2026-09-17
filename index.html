@@ -7,11 +7,16 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <div id="app"></div>
+<div id="app"></div>
     <div id="legend"></div>
+    <div id="search-box">
+      <input id="search" type="text" placeholder="Search elements..." autocomplete="off" spellcheck="false" />
+      <div id="search-results"></div>
+    </div>
+    <button id="random" type="button" aria-label="Random element" title="Random element">⚄</button>
     <div id="panel">
       <div id="title">3D Periodic Table</div>
-      <div id="info">Hover over an element</div>
+      <div id="info">Hover over an element · Scroll to zoom</div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -1,3 +1,0 @@
-- [ ] clicking an element makes the camera move to the element first, putting it in the center of that frame
-- [ ] searching an element moves you to its location
-- [ ] filtering out atoms by clicking on element type, moving the camera to the center of the element type section, and also removing the other elements or making the selected elements glow when selected

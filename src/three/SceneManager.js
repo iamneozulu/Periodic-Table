@@ -31,15 +31,46 @@ export class SceneManager {
     this.controls.enableZoom = true;
     this.controls.zoomSpeed = 1.2;
     this.controls.minDistance = 5;
-    this.controls.maxDistance = 60;
+    this.controls.maxDistance = 20;
     this.controls.enableRotate = false;
     this.controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
     this.controls.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY;
     this.controls.mouseButtons.RIGHT = THREE.MOUSE.PAN;
 
+    this._fly = null;
+
     this.addLights();
 
     window.addEventListener("resize", () => this.onResize());
+  }
+
+  flyTo(targetPosition, onComplete) {
+    const offset = this.camera.position.clone().sub(this.controls.target);
+    this._fly = {
+      startPos: this.camera.position.clone(),
+      startTarget: this.controls.target.clone(),
+      endPos: targetPosition.clone().add(offset),
+      endTarget: targetPosition.clone(),
+      startTime: performance.now(),
+      duration: 700,
+      onComplete,
+    };
+    this.controls.enabled = false;
+  }
+
+  updateFly() {
+    if (!this._fly) return;
+    const elapsed = performance.now() - this._fly.startTime;
+    const t = Math.min(elapsed / this._fly.duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    this.camera.position.lerpVectors(this._fly.startPos, this._fly.endPos, ease);
+    this.controls.target.lerpVectors(this._fly.startTarget, this._fly.endTarget, ease);
+    if (t >= 1) {
+      const cb = this._fly.onComplete;
+      this._fly = null;
+      this.controls.enabled = true;
+      if (cb) cb();
+    }
   }
 
   addLights() {
@@ -61,14 +92,15 @@ export class SceneManager {
 
   setView(view) {
     this.view = view;
-    this.controls.enabled = !view;
+    if (!this._fly) this.controls.enabled = !view;
   }
 
   start(onFrame) {
     const animate = () => {
       requestAnimationFrame(animate);
       const active = this.view || this;
-      this.controls.update();
+      this.updateFly();
+      if (!this._fly) this.controls.update();
       if (active.update) active.update();
       if (onFrame) onFrame();
       this.renderer.render(active.scene || active, active.camera);
