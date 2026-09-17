@@ -217,4 +217,10 @@ window.addEventListener("pointerup", (event) => {
   }
 });
 
-sceneManager.start();
+let loaderHidden = false;
+sceneManager.start(() => {
+  if (loaderHidden) return;
+  loaderHidden = true;
+  const loader = document.getElementById("loader");
+  if (loader) loader.classList.add("hidden");
+});
